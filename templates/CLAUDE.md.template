@@ -1,0 +1,23 @@
+# CLAUDE.md
+
+## Claude Code Adapter
+
+This file is the Claude Code adapter for Memory Inheritance. PROJECT_MEMORY.md is the canonical project memory.
+
+## Claude Code Instructions
+
+- Read PROJECT_MEMORY.md before editing.
+- Preserve existing architecture and manual notes.
+- Update project memory after meaningful changes by running `npx mem-extract sync`.
+
+## Project Context
+
+<Project name>
+
+## Detected Tech Stack
+
+- <stack list>
+
+## Useful Commands
+
+- <commands>
