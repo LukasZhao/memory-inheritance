@@ -1,0 +1,104 @@
+{
+  "version": "0.3.0",
+  "canonicalMemory": "PROJECT_MEMORY.md",
+  "generatedAt": "2026-05-08T09:21:22.832Z",
+  "project": {
+    "name": "mem-extract",
+    "stack": [
+      "Node.js",
+      "TypeScript"
+    ],
+    "packageManager": "npm"
+  },
+  "references": [
+    {
+      "id": "cli",
+      "title": "CLI Architecture",
+      "path": ".memory/modules/cli.md",
+      "category": "module",
+      "summary": "Command routing, init, sync, status, inspect, and score behavior.",
+      "readWhen": [
+        "changing CLI commands",
+        "editing src/cli.ts",
+        "adding command options"
+      ],
+      "sourceFiles": [
+        "src/index.ts",
+        "src/cli.ts",
+        "src/targetRoot.ts"
+      ],
+      "risk": "medium",
+      "stability": "active",
+      "estimatedTokens": 700,
+      "criticality": 8,
+      "priority": 80,
+      "lastUpdated": "2026-05-08T09:21:22.832Z"
+    },
+    {
+      "id": "markdown-sync",
+      "title": "Markdown Safe Sync",
+      "path": ".memory/modules/markdown-sync.md",
+      "category": "module",
+      "summary": "Marker-based replacement and manual note preservation.",
+      "readWhen": [
+        "editing sync behavior",
+        "changing PROJECT_MEMORY.md markers",
+        "preserving manual notes"
+      ],
+      "sourceFiles": [
+        "src/markdown.ts",
+        "src/memory.ts"
+      ],
+      "risk": "high",
+      "stability": "active",
+      "estimatedTokens": 800,
+      "criticality": 10,
+      "priority": 100,
+      "lastUpdated": "2026-05-08T09:21:24.725Z"
+    },
+    {
+      "id": "templates",
+      "title": "Generated Templates",
+      "path": ".memory/modules/templates.md",
+      "category": "module",
+      "summary": "AGENTS.md, CLAUDE.md, and PROJECT_MEMORY.md generation rules.",
+      "readWhen": [
+        "editing generated memory files",
+        "changing adapter behavior",
+        "changing project memory structure"
+      ],
+      "sourceFiles": [
+        "src/templates.ts",
+        "templates"
+      ],
+      "risk": "medium",
+      "stability": "active",
+      "estimatedTokens": 700,
+      "criticality": 7,
+      "priority": 70,
+      "lastUpdated": "2026-05-08T09:21:22.832Z"
+    },
+    {
+      "id": "testing",
+      "title": "Testing Notes",
+      "path": ".memory/modules/testing.md",
+      "category": "process",
+      "summary": "Commands and expectations for validating packaged CLI behavior.",
+      "readWhen": [
+        "editing tests",
+        "changing package behavior",
+        "validating npm pack output"
+      ],
+      "sourceFiles": [
+        "package.json",
+        "tests"
+      ],
+      "risk": "medium",
+      "stability": "active",
+      "estimatedTokens": 600,
+      "criticality": 6,
+      "priority": 60,
+      "lastUpdated": "2026-05-08T09:21:22.832Z"
+    }
+  ]
+}

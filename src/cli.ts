@@ -2,24 +2,31 @@ import minimist from "minimist";
 
 import { collectProjectInfo } from "./scanner.js";
 import { renderList } from "./markdown.js";
-import { getMemoryState, initMemory, inspectSection, syncMemory } from "./memory.js";
+import { getMemoryState, initMemory, inspectMemory, syncMemory } from "./memory.js";
+import { criticalityLabel, readMemoryIndex, sortedTopReferences, updateReferenceCriticality } from "./references.js";
 import { resolveTargetRoot } from "./targetRoot.js";
 
 const usage = `Usage:
   mem-extract [init]
   mem-extract init --force
   mem-extract sync
+  mem-extract sync --force
   mem-extract status
   mem-extract inspect <section>
+  mem-extract inspect ref:<reference-id>
+  mem-extract score <reference-id> <score>
+  mem-extract score list
+  mem-extract score explain
 
 Commands:
   init       Generate memory files that do not already exist
   sync       Refresh detected sections in memory files
   status     Show detected stack, commands, and memory file state
   inspect    Print one memory section by heading name
+  score      List, explain, or update memory reference criticality
 
 Options:
-  --force    Overwrite existing memory files during init
+  --force    Overwrite existing memory files during init, or adapter files during sync
   -h, --help Show this help message
 `;
 
@@ -27,9 +34,13 @@ function printStatus(): void {
   const targetRoot = resolveTargetRoot();
   const info = collectProjectInfo(targetRoot);
   const memoryState = getMemoryState(info.rootPath);
+  const index = readMemoryIndex(info.rootPath);
 
   console.log(`Project: ${info.projectName}`);
   console.log(`Root: ${info.rootPath}`);
+  if (info.packageManager) {
+    console.log(`Package Manager: ${info.packageManager}`);
+  }
   console.log("\nDetected Tech Stack");
   console.log(renderList(info.detectedStack));
   console.log("\nCommon Commands");
@@ -37,6 +48,14 @@ function printStatus(): void {
   console.log("\nMemory Files");
   for (const [fileName, exists] of Object.entries(memoryState)) {
     console.log(`- ${fileName}: ${exists ? "present" : "missing"}`);
+  }
+
+  if (index) {
+    console.log(`\nMemory References: ${index.references.length}`);
+    console.log("\nTop Critical References");
+    for (const reference of sortedTopReferences(index)) {
+      console.log(`- ${reference.id}: ${reference.criticality}`);
+    }
   }
 }
 
@@ -50,7 +69,7 @@ function printScanHeader(commandName: string, options: { force?: boolean } = {})
   if (commandName === "init") {
     initMemory(info, { force: options.force });
   } else {
-    syncMemory(info);
+    syncMemory(info, { force: options.force });
   }
 
   console.log("Done.");
@@ -77,7 +96,7 @@ export function runCli(argv: string[]): void {
   }
 
   if (command === "sync") {
-    printScanHeader("sync");
+    printScanHeader("sync", { force: args.force });
     return;
   }
 
@@ -97,10 +116,11 @@ export function runCli(argv: string[]): void {
     }
 
     const targetRoot = resolveTargetRoot();
-    const section = inspectSection(targetRoot, sectionName);
+    const section = inspectMemory(targetRoot, sectionName);
 
     if (!section) {
-      console.error(`Section not found: ${sectionName}`);
+      console.error(`Memory section or reference not found: ${sectionName}`);
+      console.error("Use `mem-extract status` or `mem-extract score list` to see available memory references.");
       process.exitCode = 1;
       return;
     }
@@ -109,7 +129,73 @@ export function runCli(argv: string[]): void {
     return;
   }
 
+  if (command === "score") {
+    handleScore(args._.slice(1).map(String));
+    return;
+  }
+
   console.error(`Unknown command: ${command}`);
   console.error(usage.trimEnd());
   process.exitCode = 1;
+}
+
+function printScoreGuide(): void {
+  console.log(`Criticality Score Guide
+1-3  low: optional context
+4-6  medium: read when relevant
+7-8  high: strongly recommended when relevant
+9-10 critical: must read when relevant`);
+}
+
+function printScoreList(): void {
+  const targetRoot = resolveTargetRoot();
+  const index = readMemoryIndex(targetRoot);
+
+  if (!index) {
+    console.error("No memory index found. Run `npx mem-extract init` or `npx mem-extract sync` first.");
+    process.exitCode = 1;
+    return;
+  }
+
+  console.log("Memory Criticality Scores");
+  for (const reference of index.references) {
+    console.log(`- ${reference.id}: ${reference.criticality} ${criticalityLabel(reference.criticality)}`);
+  }
+}
+
+function handleScore(args: string[]): void {
+  const subcommand = args[0];
+
+  if (!subcommand || subcommand === "list") {
+    printScoreList();
+    return;
+  }
+
+  if (subcommand === "explain") {
+    printScoreGuide();
+    return;
+  }
+
+  const referenceId = subcommand;
+  const score = Number(args[1]);
+
+  if (!Number.isInteger(score) || score < 1 || score > 10) {
+    console.error("Score must be an integer between 1 and 10.");
+    console.error("Example: mem-extract score markdown-sync 10");
+    process.exitCode = 1;
+    return;
+  }
+
+  const targetRoot = resolveTargetRoot();
+  const updatedReference = updateReferenceCriticality(targetRoot, referenceId, score);
+
+  if (!updatedReference) {
+    console.error(`Reference not found: ${referenceId}`);
+    console.error("Run `npx mem-extract score list` to see available references.");
+    process.exitCode = 1;
+    return;
+  }
+
+  console.log(`Updated memory reference: ${updatedReference.id}`);
+  console.log(`Criticality: ${updatedReference.criticality}`);
 }

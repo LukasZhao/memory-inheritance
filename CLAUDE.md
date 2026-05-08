@@ -1,29 +1,42 @@
 # CLAUDE.md
 
-## Claude Code Adapter
+This repository uses Memory Inheritance.
 
-This file is the Claude Code adapter for Memory Inheritance. PROJECT_MEMORY.md is the canonical project memory.
+## Required Context
+
+Before editing this repository, read:
+- `PROJECT_MEMORY.md`
+
+`PROJECT_MEMORY.md` is the compact canonical project memory for this codebase.
+
+## Token-aware Reading Rule
+
+Do not load all files under `.memory/` by default.
+Use `.memory/index.json` as a reference index. Read detailed memory files only when they are directly relevant to the current task.
+Prioritize references with higher `criticality` scores when context is limited.
+
+Examples:
+- Editing CLI command behavior -> read `.memory/modules/cli.md`
+- Editing safe sync logic -> read `.memory/modules/markdown-sync.md`
+- Editing memory file templates -> read `.memory/modules/templates.md`
+- Editing test coverage -> read `.memory/modules/testing.md`
 
 ## Claude Code Instructions
 
-- Read PROJECT_MEMORY.md before editing.
-- Preserve existing architecture and manual notes.
-- Update project memory after meaningful changes by running `npx mem-extract sync`.
+- Preserve manual notes in `PROJECT_MEMORY.md`.
+- Follow existing project architecture unless the user explicitly requests a change.
+- Keep edits focused and incremental.
+- If the task changes the project structure, run:
 
-## Project Context
+```bash
+npx mem-extract sync
+```
 
-mem-extract
+- If the task changes project intent or architecture, update the relevant manual section in `PROJECT_MEMORY.md`.
 
-## Detected Tech Stack
+## Do Not
 
-- Node.js
-- TypeScript
-
-## Useful Commands
-
-- npm install
-- npm run dev
-- npm start
-- npm run build
-- npm test
-
+- Do not overwrite human-written memory sections.
+- Do not convert the project into a different architecture without asking.
+- Do not delete memory files unless explicitly requested.
+- Do not read every `.memory/` file unless the user explicitly asks for full context.

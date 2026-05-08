@@ -1,34 +1,34 @@
 # Memory Inheritance
 
-Memory Inheritance is an NPM-based CLI tool that generates persistent Markdown memory files for AI coding assistants. It scans the current project, detects useful context, and writes structured files that agents can read at the start of future sessions. Memory Inheritance also generates a canonical PROJECT_MEMORY.md and adapter files for AI coding agents, so tools like Codex and Claude Code can automatically discover and follow your project context.
-Run it from the project directory where you want the memory files to be created:
+Memory Inheritance is an NPM-based CLI tool that generates persistent Markdown memory for AI coding assistants.
+
+Git remembers code history. Memory Inheritance remembers project context.
+
+Run it from the project directory where you want memory files to be created:
 
 ```sh
 cd your-project
 npx mem-extract init
 ```
 
-## What It Generates
+## Memory Model
 
-- `PROJECT_MEMORY.md`: canonical project memory for humans and AI agents
-- `AGENTS.md`: Codex adapter that tells Codex to read `PROJECT_MEMORY.md` first
-- `CLAUDE.md`: Claude Code adapter that tells Claude Code to read `PROJECT_MEMORY.md` first
+- `PROJECT_MEMORY.md`: compact canonical project memory for humans and AI agents
+- `AGENTS.md`: Codex / generic AI coding agent adapter
+- `CLAUDE.md`: Claude Code adapter
+- `.memory/index.json`: token-aware reference index for detailed memory
+- `.memory/modules/*.md`: optional detailed module memory loaded only when relevant
 
-`PROJECT_MEMORY.md` is the source of truth. Adapter files stay small and point each agent back to the canonical memory so project intent, architecture notes, commands, and manual notes do not get split across tools.
+`PROJECT_MEMORY.md` is the source of truth. Adapter files stay short and point agents back to the canonical memory. Detailed memory lives under `.memory/modules/` and is routed through `.memory/index.json` so agents do not waste context reading everything by default.
 
-Existing files are not overwritten by `init`. Use `init --force` only when you intentionally want to regenerate all three files.
+## Agent Reading Flow
 
-## Install And Run
-
-```sh
-npx mem-extract init
-```
-
-The default command is `init`, so this is equivalent:
-
-```sh
-npx mem-extract
-```
+1. Agent reads `AGENTS.md` or `CLAUDE.md`.
+2. Adapter tells the agent to read `PROJECT_MEMORY.md`.
+3. `PROJECT_MEMORY.md` gives a compact overview.
+4. If more detail is needed, agent consults `.memory/index.json`.
+5. Agent reads only the referenced memory files relevant to the current task.
+6. If context is limited, agent prioritizes references with higher `criticality` scores.
 
 ## CLI Commands
 
@@ -36,30 +36,56 @@ npx mem-extract
 npx mem-extract init
 npx mem-extract init --force
 npx mem-extract sync
+npx mem-extract sync --force
 npx mem-extract status
-npx mem-extract inspect "Common Commands"
+npx mem-extract inspect "Detected Tech Stack"
+npx mem-extract inspect ref:cli
+npx mem-extract score list
+npx mem-extract score explain
+npx mem-extract score markdown-sync 10
 ```
 
-- `init` creates memory files only when they do not already exist.
-- `init --force` overwrites existing memory files.
-- `sync` refreshes generated sections while preserving manual-note sections.
-- `status` prints detected stack, commands, and memory file state for `PROJECT_MEMORY.md`, `AGENTS.md`, and `CLAUDE.md`.
-- `inspect <section>` prints one Markdown section by heading name.
+- `init` creates memory files, `.memory/index.json`, and placeholder module memory files without overwriting existing files.
+- `init --force` regenerates top-level memory files and the reference index.
+- `sync` updates only the marked auto-generated scan in `PROJECT_MEMORY.md`, updates `.memory/index.json`, and preserves manual notes.
+- `sync --force` also regenerates adapter files.
+- `status` prints detected stack, commands, memory file state, reference count, and top critical references.
+- `inspect <section>` prints a section from `PROJECT_MEMORY.md`.
+- `inspect ref:<id>` prints a referenced module memory file.
+- `score <reference-id> <score>` updates developer-controlled reference criticality.
 
-## Detected Context
+## Safe Sync
 
-- Project name from `package.json` or the current folder name
-- Tech stack from common manifest/config files and dependencies
-- Important files and folders such as `README.md`, `src`, `templates`, and framework configs
-- Common commands from package scripts and known ecosystem defaults
+`PROJECT_MEMORY.md` uses explicit generated markers:
+
+```md
+<!-- AUTO-START:PROJECT-SCAN -->
+...
+<!-- AUTO-END:PROJECT-SCAN -->
+```
+
+Normal `sync` replaces only content inside that marker pair. Human-written notes outside the markers are preserved.
+
+Current sync uses explicit marker-based replacement. If future versions need complex section editing, consider a Markdown AST parser such as remark/mdast.
+
+## Criticality Scores
+
+Reference criticality uses a 1-10 scale:
+
+- `1-3` low: optional context
+- `4-6` medium: read when relevant
+- `7-8` high: strongly recommended when relevant
+- `9-10` critical: must read when relevant
+
+Criticality helps agents decide which detailed memory files to prioritize when context is limited.
 
 ## Development
 
 ```sh
 npm install
-npm run dev
 npm run build
 npm test
+npm run dev -- status
 ```
 
 ## Project Structure
@@ -74,6 +100,7 @@ memory-inheritance/
 │   ├── cli.ts
 │   ├── markdown.ts
 │   ├── memory.ts
+│   ├── references.ts
 │   ├── scanner.ts
 │   ├── targetRoot.ts
 │   ├── templates.ts
@@ -84,3 +111,15 @@ memory-inheritance/
 │   └── CLAUDE.md.template
 └── PROJECT_MEMORY.md
 ```
+
+## Roadmap
+
+- Git log semantic memory
+- `sync --recent 10`
+- Cursor adapter: `.cursor/rules/memory-inheritance.mdc`
+- Gemini adapter
+- Full semantic conflict detection
+- Token-optimized compact/full memory modes
+- Vector embedding based memory search
+- Markdown AST based section editing
+- AI-powered commit clustering

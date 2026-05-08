@@ -92,3 +92,34 @@ export function insertSectionsAfterTitle(content: string, sections: Record<strin
   const insertAt = titleMatch[0].length;
   return ensureTrailingNewline(`${content.slice(0, insertAt)}\n\n${renderedSections}\n\n${content.slice(insertAt).trimStart()}`);
 }
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function insertAfterTitle(content: string, insertion: string): string {
+  const titleMatch = /^#[ \t]+.+[ \t]*$/m.exec(content);
+
+  if (!titleMatch || titleMatch.index !== 0) {
+    return ensureTrailingNewline(`${insertion.trimEnd()}\n\n${content.trimStart()}`);
+  }
+
+  const insertAt = titleMatch[0].length;
+  return ensureTrailingNewline(`${content.slice(0, insertAt)}\n\n${insertion.trimEnd()}\n\n${content.slice(insertAt).trimStart()}`);
+}
+
+export function replaceMarkedSection(existingContent: string, markerName: string, newContent: string): string {
+  const startMarker = `<!-- AUTO-START:${markerName} -->`;
+  const endMarker = `<!-- AUTO-END:${markerName} -->`;
+  const replacement = `${startMarker}\n${newContent.trimEnd()}\n${endMarker}`;
+
+  // Current sync uses explicit marker-based replacement. If future versions need
+  // complex section editing, consider a Markdown AST parser such as remark/mdast.
+  const markerPattern = new RegExp(`${escapeRegExp(startMarker)}[\\s\\S]*?${escapeRegExp(endMarker)}`);
+
+  if (markerPattern.test(existingContent)) {
+    return ensureTrailingNewline(existingContent.replace(markerPattern, replacement));
+  }
+
+  return insertAfterTitle(existingContent, replacement);
+}
