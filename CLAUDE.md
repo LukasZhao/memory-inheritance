@@ -20,6 +20,7 @@ Examples:
 - Editing safe sync logic -> read `.memory/modules/markdown-sync.md`
 - Editing memory file templates -> read `.memory/modules/templates.md`
 - Editing test coverage -> read `.memory/modules/testing.md`
+- Understanding recent project changes -> read `.memory/modules/git-memory.md`
 
 ## Claude Code Instructions
 

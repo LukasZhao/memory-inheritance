@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { extractSection, replaceMarkedSection } from "./markdown.js";
+import { isGitRepository, readRecentCommits, summarizeRecentCommits } from "./git.js";
+import { extractSection, hasMarkedSection, replaceMarkedSection, replaceMarkedSectionAfterMarker } from "./markdown.js";
 import {
   buildMemoryIndex,
   ensureModuleFiles,
@@ -11,7 +12,12 @@ import {
   readReferenceFile,
   saveMemoryIndex
 } from "./references.js";
-import { buildMemoryDefinitions, generateProjectMemory, generateProjectScanSection } from "./templates.js";
+import {
+  buildMemoryDefinitions,
+  generateGitMemoryPlaceholder,
+  generateProjectMemory,
+  generateProjectScanSection
+} from "./templates.js";
 import type { InitMemoryOptions, MemoryFileName, MemoryIndex, MemoryStateFileName, ProjectInfo, SyncMemoryOptions } from "./types.js";
 
 const memoryFiles: MemoryFileName[] = ["PROJECT_MEMORY.md", "AGENTS.md", "CLAUDE.md"];
@@ -72,6 +78,27 @@ function ensureReferenceModules(rootPath: string, index: MemoryIndex): void {
   }
 }
 
+function ensureGitMemorySection(content: string): string {
+  if (hasMarkedSection(content, "GIT-MEMORY")) {
+    return content;
+  }
+
+  return replaceMarkedSectionAfterMarker(content, "GIT-MEMORY", generateGitMemoryPlaceholder(), "PROJECT-SCAN");
+}
+
+function updateGitMemorySection(rootPath: string, content: string, recentCount: number): string {
+  const commits = readRecentCommits(rootPath, recentCount);
+
+  if (!commits) {
+    console.log("No Git repository detected. Skipping Git memory.");
+    return ensureGitMemorySection(content);
+  }
+
+  const gitMemory = summarizeRecentCommits(commits, recentCount);
+  console.log(`Updated Git memory from ${commits.length} recent commits.`);
+  return replaceMarkedSectionAfterMarker(content, "GIT-MEMORY", gitMemory, "PROJECT-SCAN");
+}
+
 export function initMemory(info: ProjectInfo, options: InitMemoryOptions = {}): void {
   const index = writeReferenceIndex(info, {
     force: options.force,
@@ -92,11 +119,17 @@ export function syncMemory(info: ProjectInfo, options: SyncMemoryOptions = {}): 
   const projectMemoryContent = generateProjectMemory(info, index);
 
   if (!fs.existsSync(projectMemoryPath)) {
-    fs.writeFileSync(projectMemoryPath, projectMemoryContent, "utf8");
+    const content = options.recent
+      ? updateGitMemorySection(info.rootPath, projectMemoryContent, options.recent)
+      : projectMemoryContent;
+    fs.writeFileSync(projectMemoryPath, content, "utf8");
     console.log("Generated PROJECT_MEMORY.md");
   } else {
     const existingContent = fs.readFileSync(projectMemoryPath, "utf8");
-    const updatedContent = replaceMarkedSection(existingContent, "PROJECT-SCAN", generateProjectScanSection(info, index));
+    let updatedContent = replaceMarkedSection(existingContent, "PROJECT-SCAN", generateProjectScanSection(info, index));
+    updatedContent = options.recent
+      ? updateGitMemorySection(info.rootPath, updatedContent, options.recent)
+      : ensureGitMemorySection(updatedContent);
     fs.writeFileSync(projectMemoryPath, updatedContent, "utf8");
     console.log("Updated PROJECT_MEMORY.md auto section");
   }
@@ -135,6 +168,16 @@ export function getMemoryState(rootPath: string): Record<MemoryStateFileName, bo
       ".memory/index.json": false
     }
   );
+}
+
+export function getGitMemoryState(rootPath: string): { repository: boolean; recentMemory: boolean } {
+  const projectMemoryPath = filePath(rootPath, "PROJECT_MEMORY.md");
+  const content = fs.existsSync(projectMemoryPath) ? fs.readFileSync(projectMemoryPath, "utf8") : "";
+
+  return {
+    repository: isGitRepository(rootPath),
+    recentMemory: hasMarkedSection(content, "GIT-MEMORY")
+  };
 }
 
 function inspectReference(rootPath: string, referenceId: string): string | undefined {

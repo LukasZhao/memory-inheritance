@@ -18,6 +18,12 @@ If more detail is needed, consult:
 Then read only the referenced memory files relevant to the current task.
 Prioritize references with higher `criticality` scores when context is limited.
 
+Examples:
+- Editing CLI command routing -> read `.memory/modules/cli.md`
+- Editing sync or marker behavior -> read `.memory/modules/markdown-sync.md`
+- Editing generated templates -> read `.memory/modules/templates.md`
+- Understanding recent project changes -> read `.memory/modules/git-memory.md`
+
 ## Agent Workflow
 
 1. Read `PROJECT_MEMORY.md`.

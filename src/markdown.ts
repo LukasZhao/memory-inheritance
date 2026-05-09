@@ -53,7 +53,10 @@ export function extractSection(content: string, sectionName: string): string | u
     return undefined;
   }
 
-  const body = content.slice(section.bodyStart, section.end).trim();
+  const body = content
+    .slice(section.bodyStart, section.end)
+    .replace(/\n?<!-- AUTO-END:[A-Z0-9-]+ -->\s*$/, "")
+    .trim();
   return `## ${section.heading}${body ? `\n\n${body}` : ""}\n`;
 }
 
@@ -122,4 +125,37 @@ export function replaceMarkedSection(existingContent: string, markerName: string
   }
 
   return insertAfterTitle(existingContent, replacement);
+}
+
+export function hasMarkedSection(content: string, markerName: string): boolean {
+  const startMarker = `<!-- AUTO-START:${markerName} -->`;
+  const endMarker = `<!-- AUTO-END:${markerName} -->`;
+  const markerPattern = new RegExp(`${escapeRegExp(startMarker)}[\\s\\S]*?${escapeRegExp(endMarker)}`);
+  return markerPattern.test(content);
+}
+
+export function replaceMarkedSectionAfterMarker(
+  existingContent: string,
+  markerName: string,
+  newContent: string,
+  afterMarkerName: string
+): string {
+  if (hasMarkedSection(existingContent, markerName)) {
+    return replaceMarkedSection(existingContent, markerName, newContent);
+  }
+
+  const startMarker = `<!-- AUTO-START:${markerName} -->`;
+  const endMarker = `<!-- AUTO-END:${markerName} -->`;
+  const replacement = `${startMarker}\n${newContent.trimEnd()}\n${endMarker}`;
+  const afterEndMarker = `<!-- AUTO-END:${afterMarkerName} -->`;
+  const afterEndIndex = existingContent.indexOf(afterEndMarker);
+
+  if (afterEndIndex === -1) {
+    return replaceMarkedSection(existingContent, markerName, newContent);
+  }
+
+  const insertAt = afterEndIndex + afterEndMarker.length;
+  return ensureTrailingNewline(
+    `${existingContent.slice(0, insertAt)}\n\n${replacement}\n\n${existingContent.slice(insertAt).trimStart()}`
+  );
 }

@@ -23,6 +23,7 @@ Examples:
 - Editing sync or marker behavior -> read `.memory/modules/markdown-sync.md`
 - Editing generated templates -> read `.memory/modules/templates.md`
 - Editing tests -> read `.memory/modules/testing.md`
+- Understanding recent project changes -> read `.memory/modules/git-memory.md`
 
 ## Agent Workflow
 

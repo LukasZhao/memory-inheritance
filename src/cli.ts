@@ -2,7 +2,7 @@ import minimist from "minimist";
 
 import { collectProjectInfo } from "./scanner.js";
 import { renderList } from "./markdown.js";
-import { getMemoryState, initMemory, inspectMemory, syncMemory } from "./memory.js";
+import { getGitMemoryState, getMemoryState, initMemory, inspectMemory, syncMemory } from "./memory.js";
 import { criticalityLabel, readMemoryIndex, sortedTopReferences, updateReferenceCriticality } from "./references.js";
 import { resolveTargetRoot } from "./targetRoot.js";
 
@@ -11,6 +11,7 @@ const usage = `Usage:
   mem-extract init --force
   mem-extract sync
   mem-extract sync --force
+  mem-extract sync --recent <n>
   mem-extract status
   mem-extract inspect <section>
   mem-extract inspect ref:<reference-id>
@@ -27,6 +28,7 @@ Commands:
 
 Options:
   --force    Overwrite existing memory files during init, or adapter files during sync
+  --recent   Update Git semantic memory from the latest n commits during sync
   -h, --help Show this help message
 `;
 
@@ -34,6 +36,7 @@ function printStatus(): void {
   const targetRoot = resolveTargetRoot();
   const info = collectProjectInfo(targetRoot);
   const memoryState = getMemoryState(info.rootPath);
+  const gitState = getGitMemoryState(info.rootPath);
   const index = readMemoryIndex(info.rootPath);
 
   console.log(`Project: ${info.projectName}`);
@@ -50,6 +53,12 @@ function printStatus(): void {
     console.log(`- ${fileName}: ${exists ? "present" : "missing"}`);
   }
 
+  console.log("\nGit");
+  console.log(`- repository: ${gitState.repository ? "detected" : "not detected"}`);
+  if (gitState.repository) {
+    console.log(`- recent memory: ${gitState.recentMemory ? "present" : "missing"}`);
+  }
+
   if (index) {
     console.log(`\nMemory References: ${index.references.length}`);
     console.log("\nTop Critical References");
@@ -59,7 +68,7 @@ function printStatus(): void {
   }
 }
 
-function printScanHeader(commandName: string, options: { force?: boolean } = {}): void {
+function printScanHeader(commandName: string, options: { force?: boolean; recent?: number } = {}): void {
   const targetRoot = resolveTargetRoot();
   const info = collectProjectInfo(targetRoot);
   console.log(`Running ${commandName}: ${info.projectName}`);
@@ -69,7 +78,7 @@ function printScanHeader(commandName: string, options: { force?: boolean } = {})
   if (commandName === "init") {
     initMemory(info, { force: options.force });
   } else {
-    syncMemory(info, { force: options.force });
+    syncMemory(info, { force: options.force, recent: options.recent });
   }
 
   console.log("Done.");
@@ -80,7 +89,8 @@ export function runCli(argv: string[]): void {
     alias: {
       h: "help"
     },
-    boolean: ["force", "help"]
+    boolean: ["force", "help"],
+    string: ["recent"]
   });
 
   const command = String(args._[0] ?? "init");
@@ -96,7 +106,14 @@ export function runCli(argv: string[]): void {
   }
 
   if (command === "sync") {
-    printScanHeader("sync", { force: args.force });
+    const recent = parseRecentOption(args.recent);
+
+    if (recent === false) {
+      process.exitCode = 1;
+      return;
+    }
+
+    printScanHeader("sync", { force: args.force, recent });
     return;
   }
 
@@ -145,6 +162,22 @@ function printScoreGuide(): void {
 4-6  medium: read when relevant
 7-8  high: strongly recommended when relevant
 9-10 critical: must read when relevant`);
+}
+
+function parseRecentOption(value: unknown): number | undefined | false {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  const recent = Number(value);
+
+  if (!Number.isInteger(recent) || recent < 1) {
+    console.error("--recent must be a positive integer.");
+    console.error("Example: mem-extract sync --recent 10");
+    return false;
+  }
+
+  return recent;
 }
 
 function printScoreList(): void {

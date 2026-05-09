@@ -40,11 +40,26 @@ Detailed memory files are indexed in `.memory/index.json`.
 | markdown-sync | Markdown Safe Sync | `.memory/modules/markdown-sync.md` | 10 | editing sync behavior |
 | templates | Generated Templates | `.memory/modules/templates.md` | 7 | editing generated memory files |
 | testing | Testing Notes | `.memory/modules/testing.md` | 6 | editing tests |
+| git-memory | Git Semantic Memory | `.memory/modules/git-memory.md` | 8 | understanding recent project changes |
 
 ## Generated
 
-- Generated at: 2026-05-08T09:21:22.832Z
+- Generated at: 2026-05-09T07:35:55.325Z
 <!-- AUTO-END:PROJECT-SCAN -->
+
+<!-- AUTO-START:GIT-MEMORY -->
+## Recent Development Memory
+
+Generated from the latest 5 Git commits.
+
+### Other changes
+
+- Update README.md.
+- Fullfill token aware ai memory management system.
+- Update issue templates.
+- Added canonical memory plus agent adapter support.
+- Initial commit.
+<!-- AUTO-END:GIT-MEMORY -->
 
 ## Manual Notes
 
@@ -75,3 +90,6 @@ Example:
 - Use `.memory/index.json` to find relevant detailed memory.
 - Prioritize high-criticality references when context is limited.
 - Update memory after meaningful changes.
+
+## Manual Target Project Note
+This target project note must survive sync.

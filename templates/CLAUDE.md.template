@@ -15,6 +15,12 @@ Do not load all files under `.memory/` by default.
 Use `.memory/index.json` as a reference index. Read detailed memory files only when they are directly relevant to the current task.
 Prioritize references with higher `criticality` scores when context is limited.
 
+Examples:
+- Editing CLI command behavior -> read `.memory/modules/cli.md`
+- Editing safe sync logic -> read `.memory/modules/markdown-sync.md`
+- Editing memory file templates -> read `.memory/modules/templates.md`
+- Understanding recent project changes -> read `.memory/modules/git-memory.md`
+
 ## Claude Code Instructions
 
 - Preserve manual notes in `PROJECT_MEMORY.md`.

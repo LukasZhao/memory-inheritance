@@ -28,11 +28,18 @@ Detailed memory files are indexed in `.memory/index.json`.
 | ID | Area | Path | Criticality | When to read |
 |---|---|---|---:|---|
 | cli | CLI Architecture | `.memory/modules/cli.md` | 8 | Changing CLI commands |
+| git-memory | Git Semantic Memory | `.memory/modules/git-memory.md` | 7 | Understanding recent project changes |
 
 ## Generated
 
 - Generated at: <timestamp>
 <!-- AUTO-END:PROJECT-SCAN -->
+
+<!-- AUTO-START:GIT-MEMORY -->
+## Recent Development Memory
+
+No Git memory generated yet.
+<!-- AUTO-END:GIT-MEMORY -->
 
 ## Manual Notes
 

@@ -15,4 +15,6 @@ Read this file only when editing generated memory files.
 - `PROJECT_MEMORY.md` is canonical memory.
 - `AGENTS.md` is the Codex / generic agent adapter.
 - `CLAUDE.md` is the Claude Code adapter.
+- `.memory/index.json` routes agents to detailed memory files.
+- `.memory/modules/git-memory.md` documents recent Git context behavior.
 - Adapter files should stay short.

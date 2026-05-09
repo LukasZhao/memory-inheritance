@@ -38,6 +38,12 @@ ${renderReferenceTable(index)}
 - Generated at: ${index.generatedAt}`;
 }
 
+export function generateGitMemoryPlaceholder(): string {
+  return `## Recent Development Memory
+
+No Git memory generated yet.`;
+}
+
 export function generateProjectMemory(info: ProjectInfo, index: MemoryIndex): string {
   return `# PROJECT_MEMORY.md
 
@@ -48,6 +54,10 @@ This file should stay compact. For detailed context, use \`.memory/index.json\` 
 <!-- AUTO-START:PROJECT-SCAN -->
 ${generateProjectScanSection(info, index)}
 <!-- AUTO-END:PROJECT-SCAN -->
+
+<!-- AUTO-START:GIT-MEMORY -->
+${generateGitMemoryPlaceholder()}
+<!-- AUTO-END:GIT-MEMORY -->
 
 ## Manual Notes
 
@@ -107,6 +117,7 @@ Examples:
 - Editing sync or marker behavior -> read \`.memory/modules/markdown-sync.md\`
 - Editing generated templates -> read \`.memory/modules/templates.md\`
 - Editing tests -> read \`.memory/modules/testing.md\`
+- Understanding recent project changes -> read \`.memory/modules/git-memory.md\`
 
 ## Agent Workflow
 
@@ -156,6 +167,7 @@ Examples:
 - Editing safe sync logic -> read \`.memory/modules/markdown-sync.md\`
 - Editing memory file templates -> read \`.memory/modules/templates.md\`
 - Editing test coverage -> read \`.memory/modules/testing.md\`
+- Understanding recent project changes -> read \`.memory/modules/git-memory.md\`
 
 ## Claude Code Instructions
 

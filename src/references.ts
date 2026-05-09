@@ -62,6 +62,24 @@ const referenceSeeds: ReferenceSeed[] = [
     stability: "active",
     estimatedTokens: 600,
     criticality: 6
+  },
+  {
+    id: "git-memory",
+    title: "Git Semantic Memory",
+    path: ".memory/modules/git-memory.md",
+    category: "process",
+    summary: "Recent Git activity summarized into compact AI-readable development memory.",
+    readWhen: [
+      "understanding recent project changes",
+      "continuing previous development work",
+      "summarizing recent commits",
+      "debugging regressions after recent changes"
+    ],
+    sourceFiles: [".git", "src/git.ts", "src/memory.ts"],
+    risk: "medium",
+    stability: "active",
+    estimatedTokens: 700,
+    criticality: 7
   }
 ];
 
@@ -86,7 +104,8 @@ function placeholderModuleContent(reference: MemoryReference): string {
     cli: "CLI command behavior.",
     "markdown-sync": "marker-based sync behavior.",
     templates: "generated memory file templates.",
-    testing: "validation and packaging behavior."
+    testing: "validation and packaging behavior.",
+    "git-memory": "recent Git-based development context."
   };
   const notesById: Record<string, string[]> = {
     cli: [
@@ -112,6 +131,11 @@ function placeholderModuleContent(reference: MemoryReference): string {
       "Test packaged behavior in a real local project.",
       "Commands must operate on `process.cwd()`.",
       "Memory files should be generated in the target project root."
+    ],
+    "git-memory": [
+      "Git memory should be summarized, not dumped.",
+      "`sync --recent <n>` updates the Recent Development Memory section.",
+      "Raw commit logs should not be inserted into `PROJECT_MEMORY.md` by default."
     ]
   };
   const notes = notesById[reference.id] ?? ["Add detailed memory notes here."];
@@ -174,7 +198,7 @@ export function buildMemoryIndex(
   });
 
   return {
-    version: "0.3.0",
+    version: "0.4.0",
     canonicalMemory: "PROJECT_MEMORY.md",
     generatedAt: timestamp,
     project: {

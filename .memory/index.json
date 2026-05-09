@@ -1,7 +1,7 @@
 {
-  "version": "0.3.0",
+  "version": "0.4.0",
   "canonicalMemory": "PROJECT_MEMORY.md",
-  "generatedAt": "2026-05-08T09:21:22.832Z",
+  "generatedAt": "2026-05-09T07:35:55.325Z",
   "project": {
     "name": "mem-extract",
     "stack": [
@@ -32,7 +32,7 @@
       "estimatedTokens": 700,
       "criticality": 8,
       "priority": 80,
-      "lastUpdated": "2026-05-08T09:21:22.832Z"
+      "lastUpdated": "2026-05-09T07:35:55.325Z"
     },
     {
       "id": "markdown-sync",
@@ -54,7 +54,7 @@
       "estimatedTokens": 800,
       "criticality": 10,
       "priority": 100,
-      "lastUpdated": "2026-05-08T09:21:24.725Z"
+      "lastUpdated": "2026-05-09T07:35:55.325Z"
     },
     {
       "id": "templates",
@@ -76,7 +76,7 @@
       "estimatedTokens": 700,
       "criticality": 7,
       "priority": 70,
-      "lastUpdated": "2026-05-08T09:21:22.832Z"
+      "lastUpdated": "2026-05-09T07:35:55.325Z"
     },
     {
       "id": "testing",
@@ -98,7 +98,31 @@
       "estimatedTokens": 600,
       "criticality": 6,
       "priority": 60,
-      "lastUpdated": "2026-05-08T09:21:22.832Z"
+      "lastUpdated": "2026-05-09T07:35:55.325Z"
+    },
+    {
+      "id": "git-memory",
+      "title": "Git Semantic Memory",
+      "path": ".memory/modules/git-memory.md",
+      "category": "process",
+      "summary": "Recent Git activity summarized into compact AI-readable development memory.",
+      "readWhen": [
+        "understanding recent project changes",
+        "continuing previous development work",
+        "summarizing recent commits",
+        "debugging regressions after recent changes"
+      ],
+      "sourceFiles": [
+        ".git",
+        "src/git.ts",
+        "src/memory.ts"
+      ],
+      "risk": "medium",
+      "stability": "active",
+      "estimatedTokens": 700,
+      "criticality": 8,
+      "priority": 80,
+      "lastUpdated": "2026-05-09T07:35:55.325Z"
     }
   ]
 }

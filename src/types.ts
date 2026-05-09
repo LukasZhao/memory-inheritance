@@ -30,6 +30,7 @@ export type InitMemoryOptions = {
 
 export type SyncMemoryOptions = {
   force?: boolean;
+  recent?: number;
 };
 
 export type MemoryReference = {
