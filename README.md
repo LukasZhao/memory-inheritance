@@ -57,7 +57,10 @@ CLAUDE.md
   index.json
   modules/
     cli.md
+    context-capture.md
+    git-memory.md
     markdown-sync.md
+    review.md
     templates.md
     testing.md
 ```
@@ -122,7 +125,14 @@ npx mem-extract inspect "Detected Tech Stack"
 npx mem-extract inspect ref:cli
 ```
 
-### 5. Sync memory after meaningful changes
+### 5. Capture human context
+
+```bash
+npx mem-extract note "customer requires all processing to stay local"
+npx mem-extract decide "Use Markdown as source of truth instead of a database"
+```
+
+### 6. Sync memory after meaningful changes
 
 ```bash
 npx mem-extract sync
@@ -273,6 +283,48 @@ This lets project owners tell AI agents:
 
 ---
 
+### Memory readiness review
+
+Before handing a project to a new AI agent, run:
+
+```bash
+npx mem-extract review
+```
+
+The review is local-only and does not call any external AI API.
+
+It checks:
+
+- whether the memory file structure exists
+- whether `AGENTS.md` and `CLAUDE.md` point agents to `PROJECT_MEMORY.md`
+- whether canonical context sections have useful content
+- whether `.memory/index.json` is usable for token-aware routing
+- whether Git memory is present and fresh
+
+Readiness is reported as:
+
+- `Ready`: agent can take over immediately
+- `Usable`: agent can work, but has clear blind spots
+- `Incomplete`: agent will frequently ask basic questions
+
+---
+
+### Human context capture
+
+Use `note` and `decide` to capture important project context without opening an editor.
+
+```bash
+npx mem-extract note "customer requires all processing to stay local"
+npx mem-extract decide "Use Markdown as source of truth instead of a database"
+```
+
+- `note` appends a dated bullet under `## Manual Notes`
+- `decide` appends a dated bullet under `## Architecture Decisions`
+- existing content is preserved
+- generated marker sections are not modified
+
+---
+
 ## Commands
 
 | Command | Description |
@@ -283,6 +335,9 @@ This lets project owners tell AI agents:
 | `npx mem-extract status` | Show project and memory status |
 | `npx mem-extract inspect <section>` | Inspect a section from `PROJECT_MEMORY.md` |
 | `npx mem-extract inspect ref:<id>` | Inspect a referenced memory module |
+| `npx mem-extract note "..."` | Append a dated note to `Manual Notes` |
+| `npx mem-extract decide "..."` | Append a dated decision to `Architecture Decisions` |
+| `npx mem-extract review` | Check whether memory is ready for AI agents |
 | `npx mem-extract score <id> <score>` | Set criticality score for a memory reference |
 | `npx mem-extract score list` | List memory criticality scores |
 | `npx mem-extract score explain` | Explain the scoring system |
@@ -432,14 +487,21 @@ Memory is code. Review it before committing.
 - compressed development memory
 - no full history dumps by default
 
-### v0.5 — Semantic conflict detection
+### v0.5 — Memory readiness review
+
+- `review` command
+- readiness status without numeric scoring
+- structure, adapter, context, token routing, and freshness checks
+- suggested next steps for better agent handoff
+
+### v0.6 — Semantic conflict detection
 
 - forbidden pattern checks
 - architecture rule warnings
 - product direction warnings
 - possible CI integration
 
-### v0.6 — Ecosystem adapters
+### v0.7 — Ecosystem adapters
 
 - Cursor adapter
 - Gemini adapter

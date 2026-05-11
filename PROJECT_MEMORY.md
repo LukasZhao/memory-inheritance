@@ -40,11 +40,13 @@ Detailed memory files are indexed in `.memory/index.json`.
 | markdown-sync | Markdown Safe Sync | `.memory/modules/markdown-sync.md` | 10 | editing sync behavior |
 | templates | Generated Templates | `.memory/modules/templates.md` | 7 | editing generated memory files |
 | testing | Testing Notes | `.memory/modules/testing.md` | 6 | editing tests |
-| git-memory | Git Semantic Memory | `.memory/modules/git-memory.md` | 8 | understanding recent project changes |
+| git-memory | Git Semantic Memory | `.memory/modules/git-memory.md` | 7 | understanding recent project changes |
+| review | Memory Readiness Review | `.memory/modules/review.md` | 7 | implementing or modifying the review command |
+| context-capture | Context Capture Commands | `.memory/modules/context-capture.md` | 8 | editing note command |
 
 ## Generated
 
-- Generated at: 2026-05-09T07:35:55.325Z
+- Generated at: 2026-05-11T07:38:00.818Z
 <!-- AUTO-END:PROJECT-SCAN -->
 
 <!-- AUTO-START:GIT-MEMORY -->
@@ -55,19 +57,20 @@ Generated from the latest 5 Git commits.
 ### Other changes
 
 - Update README.md.
+- Enhance README with detailed project information.
+- Add Git semantic memory sync support.
 - Fullfill token aware ai memory management system.
-- Update issue templates.
-- Added canonical memory plus agent adapter support.
-- Initial commit.
 <!-- AUTO-END:GIT-MEMORY -->
 
 ## Manual Notes
 
 Add human-maintained project intent, architecture notes, constraints, known issues, and TODOs here.
+- [2026-05-11] customer requires all processing to stay local
 
 ## Architecture Decisions
 
 Add important decisions here.
+- [2026-05-11] Use Markdown as source of truth instead of a database
 
 ## Current Development State
 
@@ -90,6 +93,3 @@ Example:
 - Use `.memory/index.json` to find relevant detailed memory.
 - Prioritize high-criticality references when context is limited.
 - Update memory after meaningful changes.
-
-## Manual Target Project Note
-This target project note must survive sync.

@@ -1,5 +1,8 @@
 import minimist from "minimist";
 
+import { runDecide } from "./commands/decide.js";
+import { runNote } from "./commands/note.js";
+import { runReview } from "./commands/review.js";
 import { collectProjectInfo } from "./scanner.js";
 import { renderList } from "./markdown.js";
 import { getGitMemoryState, getMemoryState, initMemory, inspectMemory, syncMemory } from "./memory.js";
@@ -15,6 +18,9 @@ const usage = `Usage:
   mem-extract status
   mem-extract inspect <section>
   mem-extract inspect ref:<reference-id>
+  mem-extract note "..."
+  mem-extract decide "..."
+  mem-extract review
   mem-extract score <reference-id> <score>
   mem-extract score list
   mem-extract score explain
@@ -24,6 +30,9 @@ Commands:
   sync       Refresh detected sections in memory files
   status     Show detected stack, commands, and memory file state
   inspect    Print one memory section by heading name
+  note       Append a human note to PROJECT_MEMORY.md
+  decide     Append an architecture decision to PROJECT_MEMORY.md
+  review     Check whether project memory is ready for AI agents
   score      List, explain, or update memory reference criticality
 
 Options:
@@ -82,6 +91,17 @@ function printScanHeader(commandName: string, options: { force?: boolean; recent
   }
 
   console.log("Done.");
+
+  if (commandName === "init") {
+    console.log("✓ Memory files created");
+    console.log("Next: capture project context with:");
+    console.log('npx mem-extract note "..."');
+    console.log('npx mem-extract decide "..."');
+    console.log("Then run `npx mem-extract review`");
+  } else {
+    console.log("✓ PROJECT_MEMORY.md updated");
+    console.log("Tip: run `npx mem-extract review` to check if memory is ready for AI agents");
+  }
 }
 
 export function runCli(argv: string[]): void {
@@ -143,6 +163,21 @@ export function runCli(argv: string[]): void {
     }
 
     process.stdout.write(section);
+    return;
+  }
+
+  if (command === "note") {
+    runNote(resolveTargetRoot(), args._.slice(1).join(" "));
+    return;
+  }
+
+  if (command === "decide") {
+    runDecide(resolveTargetRoot(), args._.slice(1).join(" "));
+    return;
+  }
+
+  if (command === "review") {
+    runReview(resolveTargetRoot());
     return;
   }
 

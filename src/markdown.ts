@@ -159,3 +159,17 @@ export function replaceMarkedSectionAfterMarker(
     `${existingContent.slice(0, insertAt)}\n\n${replacement}\n\n${existingContent.slice(insertAt).trimStart()}`
   );
 }
+
+export function appendToMarkdownSection(content: string, sectionHeading: string, lineToAppend: string): string {
+  const headingSlug = slugify(sectionHeading);
+  const section = findSections(content).find((candidate) => slugify(candidate.heading) === headingSlug);
+  const line = lineToAppend.trimEnd();
+
+  if (!section) {
+    return ensureTrailingNewline(`${content.trimEnd()}\n\n## ${sectionHeading}\n\n${line}\n`);
+  }
+
+  const beforeSectionEnd = content.slice(0, section.end).trimEnd();
+  const afterSectionEnd = content.slice(section.end);
+  return ensureTrailingNewline(`${beforeSectionEnd}\n${line}\n\n${afterSectionEnd.trimStart()}`);
+}

@@ -1,7 +1,7 @@
 {
   "version": "0.4.0",
   "canonicalMemory": "PROJECT_MEMORY.md",
-  "generatedAt": "2026-05-09T07:35:55.325Z",
+  "generatedAt": "2026-05-11T07:38:00.818Z",
   "project": {
     "name": "mem-extract",
     "stack": [
@@ -32,7 +32,7 @@
       "estimatedTokens": 700,
       "criticality": 8,
       "priority": 80,
-      "lastUpdated": "2026-05-09T07:35:55.325Z"
+      "lastUpdated": "2026-05-11T07:38:00.818Z"
     },
     {
       "id": "markdown-sync",
@@ -54,7 +54,7 @@
       "estimatedTokens": 800,
       "criticality": 10,
       "priority": 100,
-      "lastUpdated": "2026-05-09T07:35:55.325Z"
+      "lastUpdated": "2026-05-11T07:38:00.818Z"
     },
     {
       "id": "templates",
@@ -76,7 +76,7 @@
       "estimatedTokens": 700,
       "criticality": 7,
       "priority": 70,
-      "lastUpdated": "2026-05-09T07:35:55.325Z"
+      "lastUpdated": "2026-05-11T07:38:00.818Z"
     },
     {
       "id": "testing",
@@ -98,7 +98,7 @@
       "estimatedTokens": 600,
       "criticality": 6,
       "priority": 60,
-      "lastUpdated": "2026-05-09T07:35:55.325Z"
+      "lastUpdated": "2026-05-11T07:38:00.818Z"
     },
     {
       "id": "git-memory",
@@ -120,9 +120,53 @@
       "risk": "medium",
       "stability": "active",
       "estimatedTokens": 700,
+      "criticality": 7,
+      "priority": 70,
+      "lastUpdated": "2026-05-11T07:38:00.818Z"
+    },
+    {
+      "id": "review",
+      "title": "Memory Readiness Review",
+      "path": ".memory/modules/review.md",
+      "category": "module",
+      "summary": "Checks whether current project memory is ready for AI coding agents to use.",
+      "readWhen": [
+        "implementing or modifying the review command",
+        "changing review scoring logic",
+        "adding new review checks"
+      ],
+      "sourceFiles": [
+        "src/commands/review.ts"
+      ],
+      "risk": "low",
+      "stability": "active",
+      "estimatedTokens": 600,
+      "criticality": 7,
+      "priority": 70,
+      "lastUpdated": "2026-05-11T07:38:00.818Z"
+    },
+    {
+      "id": "context-capture",
+      "title": "Context Capture Commands",
+      "path": ".memory/modules/context-capture.md",
+      "category": "module",
+      "summary": "Low-friction commands for appending human notes and architecture decisions to PROJECT_MEMORY.md.",
+      "readWhen": [
+        "editing note command",
+        "editing decide command",
+        "changing manual context capture workflow"
+      ],
+      "sourceFiles": [
+        "src/commands/note.ts",
+        "src/commands/decide.ts",
+        "src/markdown.ts"
+      ],
+      "risk": "medium",
+      "stability": "active",
+      "estimatedTokens": 600,
       "criticality": 8,
       "priority": 80,
-      "lastUpdated": "2026-05-09T07:35:55.325Z"
+      "lastUpdated": "2026-05-11T07:38:00.818Z"
     }
   ]
 }

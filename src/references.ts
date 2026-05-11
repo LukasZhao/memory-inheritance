@@ -80,6 +80,32 @@ const referenceSeeds: ReferenceSeed[] = [
     stability: "active",
     estimatedTokens: 700,
     criticality: 7
+  },
+  {
+    id: "review",
+    title: "Memory Readiness Review",
+    path: ".memory/modules/review.md",
+    category: "module",
+    summary: "Checks whether current project memory is ready for AI coding agents to use.",
+    readWhen: ["implementing or modifying the review command", "changing review scoring logic", "adding new review checks"],
+    sourceFiles: ["src/commands/review.ts"],
+    risk: "low",
+    stability: "active",
+    estimatedTokens: 600,
+    criticality: 7
+  },
+  {
+    id: "context-capture",
+    title: "Context Capture Commands",
+    path: ".memory/modules/context-capture.md",
+    category: "module",
+    summary: "Low-friction commands for appending human notes and architecture decisions to PROJECT_MEMORY.md.",
+    readWhen: ["editing note command", "editing decide command", "changing manual context capture workflow"],
+    sourceFiles: ["src/commands/note.ts", "src/commands/decide.ts", "src/markdown.ts"],
+    risk: "medium",
+    stability: "active",
+    estimatedTokens: 600,
+    criticality: 8
   }
 ];
 
@@ -105,7 +131,9 @@ function placeholderModuleContent(reference: MemoryReference): string {
     "markdown-sync": "marker-based sync behavior.",
     templates: "generated memory file templates.",
     testing: "validation and packaging behavior.",
-    "git-memory": "recent Git-based development context."
+    "git-memory": "recent Git-based development context.",
+    review: "memory readiness review behavior.",
+    "context-capture": "`note` and `decide`."
   };
   const notesById: Record<string, string[]> = {
     cli: [
@@ -136,6 +164,18 @@ function placeholderModuleContent(reference: MemoryReference): string {
       "Git memory should be summarized, not dumped.",
       "`sync --recent <n>` updates the Recent Development Memory section.",
       "Raw commit logs should not be inserted into `PROJECT_MEMORY.md` by default."
+    ],
+    review: [
+      "`review` answers whether a new AI agent can take over immediately.",
+      "Readiness uses Ready, Usable, or Incomplete instead of a numeric score.",
+      "Review should only inspect local files and never auto-fix memory content.",
+      "Impact messages should explain why failed or warning checks matter."
+    ],
+    "context-capture": [
+      "`note` appends to Manual Notes.",
+      "`decide` appends to Architecture Decisions.",
+      "These commands should never overwrite existing content.",
+      "They are designed to capture human context at the moment decisions are made."
     ]
   };
   const notes = notesById[reference.id] ?? ["Add detailed memory notes here."];
