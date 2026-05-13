@@ -213,12 +213,54 @@ function captureReview(rootPath) {
   return output;
 }
 
+function expectedReadyReviewOutput() {
+  return `Memory Readiness Review
+────────────────────────────────────────
+Status: Ready — agent can take over immediately
+
+Structure
+  ✅ PROJECT_MEMORY.md exists
+  ✅ CLAUDE.md exists
+  ✅ AGENTS.md exists
+  ✅ .memory/index.json exists
+  ✅ .memory/modules/ exists
+
+Agent Adapter Readiness
+  ✅ CLAUDE.md correctly references PROJECT_MEMORY.md
+  ✅ AGENTS.md correctly references PROJECT_MEMORY.md
+  ✅ CLAUDE.md references .memory/index.json
+
+Context Richness
+  ✅ Project Overview is present
+  ✅ Current Development State is present
+  ✅ Manual Notes is present
+  ✅ Architecture Decisions is present
+  ✅ AI Collaboration Rules exists
+
+Token-Aware Organization
+  ✅ .memory/index.json has references
+  ✅ References include criticality scores
+  ✅ References include readWhen
+  ✅ PROJECT_MEMORY.md is compact
+
+Freshness
+  ✅ Git memory section exists
+  ✅ Git memory is present
+  ✅ Memory is fresh
+────────────────────────────────────────
+Suggested next steps:
+ 1. Memory looks good. Run npx mem-extract sync --recent 10 regularly to keep Git memory fresh.
+────────────────────────────────────────
+`;
+}
+
 test("review reports Ready when all required memory context is present", () => {
   const rootPath = makeTempProject();
   writeReviewFixture(rootPath);
 
   const output = captureReview(rootPath);
 
+  assert.equal(output, expectedReadyReviewOutput());
   assert.match(output, /Status: Ready — agent can take over immediately/);
   assert.doesNotMatch(output, /❌|⚠️/);
 });
