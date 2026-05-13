@@ -21,6 +21,7 @@ Project name: mem-extract
 - tsconfig.json
 - src
 - templates
+- tests
 
 ## Common Commands
 
@@ -46,7 +47,7 @@ Detailed memory files are indexed in `.memory/index.json`.
 
 ## Generated
 
-- Generated at: 2026-05-11T07:38:00.818Z
+- Generated at: 2026-05-13T06:37:15.543Z
 <!-- AUTO-END:PROJECT-SCAN -->
 
 <!-- AUTO-START:GIT-MEMORY -->

@@ -1,7 +1,7 @@
 {
   "version": "0.4.0",
   "canonicalMemory": "PROJECT_MEMORY.md",
-  "generatedAt": "2026-05-11T07:38:00.818Z",
+  "generatedAt": "2026-05-13T06:37:15.543Z",
   "project": {
     "name": "mem-extract",
     "stack": [
@@ -32,7 +32,7 @@
       "estimatedTokens": 700,
       "criticality": 8,
       "priority": 80,
-      "lastUpdated": "2026-05-11T07:38:00.818Z"
+      "lastUpdated": "2026-05-13T06:37:15.543Z"
     },
     {
       "id": "markdown-sync",
@@ -54,7 +54,7 @@
       "estimatedTokens": 800,
       "criticality": 10,
       "priority": 100,
-      "lastUpdated": "2026-05-11T07:38:00.818Z"
+      "lastUpdated": "2026-05-13T06:37:15.543Z"
     },
     {
       "id": "templates",
@@ -76,7 +76,7 @@
       "estimatedTokens": 700,
       "criticality": 7,
       "priority": 70,
-      "lastUpdated": "2026-05-11T07:38:00.818Z"
+      "lastUpdated": "2026-05-13T06:37:15.543Z"
     },
     {
       "id": "testing",
@@ -98,7 +98,7 @@
       "estimatedTokens": 600,
       "criticality": 6,
       "priority": 60,
-      "lastUpdated": "2026-05-11T07:38:00.818Z"
+      "lastUpdated": "2026-05-13T06:37:15.543Z"
     },
     {
       "id": "git-memory",
@@ -122,7 +122,7 @@
       "estimatedTokens": 700,
       "criticality": 7,
       "priority": 70,
-      "lastUpdated": "2026-05-11T07:38:00.818Z"
+      "lastUpdated": "2026-05-13T06:37:15.543Z"
     },
     {
       "id": "review",
@@ -143,7 +143,7 @@
       "estimatedTokens": 600,
       "criticality": 7,
       "priority": 70,
-      "lastUpdated": "2026-05-11T07:38:00.818Z"
+      "lastUpdated": "2026-05-13T06:37:15.543Z"
     },
     {
       "id": "context-capture",
@@ -166,7 +166,7 @@
       "estimatedTokens": 600,
       "criticality": 8,
       "priority": 80,
-      "lastUpdated": "2026-05-11T07:38:00.818Z"
+      "lastUpdated": "2026-05-13T06:37:15.543Z"
     }
   ]
 }
