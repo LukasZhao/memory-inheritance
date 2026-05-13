@@ -1,10 +1,17 @@
 import { buildReview } from "../review/checks.js";
-import { formatReview, formatReviewFailure } from "../review/format.js";
+import { formatReview, formatReviewFailure, formatReviewFailureJson, formatReviewJson } from "../review/format.js";
 
-export function runReview(rootPath = process.cwd()): void {
+type RunReviewOptions = {
+  format?: "text" | "json";
+};
+
+export function runReview(rootPath = process.cwd(), options: RunReviewOptions = {}): void {
+  const format = options.format ?? "text";
+
   try {
-    process.stdout.write(formatReview(buildReview(rootPath)));
+    const categories = buildReview(rootPath);
+    process.stdout.write(format === "json" ? formatReviewJson(categories) : formatReview(categories));
   } catch {
-    process.stdout.write(formatReviewFailure());
+    process.stdout.write(format === "json" ? formatReviewFailureJson() : formatReviewFailure());
   }
 }

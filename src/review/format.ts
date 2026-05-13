@@ -1,4 +1,4 @@
-import type { NextStepKey, ReviewCategory, Severity } from "./types.js";
+import type { NextStepKey, ReviewCategory, ReviewJsonOutput, Severity } from "./types.js";
 
 export const separator = "────────────────────────────────────────";
 
@@ -73,6 +73,40 @@ export function formatReview(categories: ReviewCategory[]): string {
   return `${lines.join("\n")}\n`;
 }
 
+export function formatReviewJson(categories: ReviewCategory[]): string {
+  const output: ReviewJsonOutput = {
+    overallStatus: overallStatus(categories),
+    categories: categories.map((category) => ({
+      title: category.title,
+      checks: category.checks.map((check) => ({
+        label: check.label,
+        severity: check.severity,
+        impact: check.impact ?? null,
+        nextStepKey: check.nextStepKey ?? null
+      }))
+    })),
+    suggestedNextSteps: nextSteps(categories)
+  };
+
+  return `${JSON.stringify(output, null, 2)}\n`;
+}
+
 export function formatReviewFailure(): string {
   return `Memory Readiness Review\n${separator}\nStatus: Incomplete — agent will frequently ask basic questions\n\nStructure\n  ❌ Review could not complete\n    → A local file could not be inspected safely\n${separator}\nSuggested next steps:\n 1. Run: npx mem-extract init\n${separator}\n`;
+}
+
+export function formatReviewFailureJson(): string {
+  return formatReviewJson([
+    {
+      title: "Structure",
+      checks: [
+        {
+          label: "Review could not complete",
+          severity: "critical",
+          impact: "A local file could not be inspected safely",
+          nextStepKey: "init"
+        }
+      ]
+    }
+  ]);
 }

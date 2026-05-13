@@ -32,3 +32,21 @@ export type MemoryReferenceLike = {
 export type MemoryIndexLike = {
   references?: MemoryReferenceLike[];
 };
+
+export type ReviewJsonCheck = {
+  label: string;
+  severity: Severity;
+  impact: string | null;
+  nextStepKey: NextStepKey | null;
+};
+
+export type ReviewJsonCategory = {
+  title: string;
+  checks: ReviewJsonCheck[];
+};
+
+export type ReviewJsonOutput = {
+  overallStatus: string;
+  categories: ReviewJsonCategory[];
+  suggestedNextSteps: string[];
+};

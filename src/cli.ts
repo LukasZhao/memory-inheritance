@@ -21,6 +21,7 @@ const usage = `Usage:
   mem-extract note "..."
   mem-extract decide "..."
   mem-extract review
+  mem-extract review --json
   mem-extract score <reference-id> <score>
   mem-extract score list
   mem-extract score explain
@@ -38,6 +39,7 @@ Commands:
 Options:
   --force    Overwrite existing memory files during init, or adapter files during sync
   --recent   Update Git semantic memory from the latest n commits during sync
+  --json     Emit machine-readable output for supported commands
   -h, --help Show this help message
 `;
 
@@ -109,7 +111,7 @@ export function runCli(argv: string[]): void {
     alias: {
       h: "help"
     },
-    boolean: ["force", "help"],
+    boolean: ["force", "help", "json"],
     string: ["recent"]
   });
 
@@ -177,7 +179,7 @@ export function runCli(argv: string[]): void {
   }
 
   if (command === "review") {
-    runReview(resolveTargetRoot());
+    runReview(resolveTargetRoot(), { format: args.json ? "json" : "text" });
     return;
   }
 

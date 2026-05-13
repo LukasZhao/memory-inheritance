@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 
+import { runCli } from "../dist/cli.js";
 import { runReview } from "../dist/commands/review.js";
 import { syncMemory } from "../dist/memory.js";
 import { collectProjectInfo } from "../dist/scanner.js";
@@ -190,7 +191,7 @@ function writeReviewFixture(rootPath, overrides = {}) {
   writeMemoryModuleFixtures(rootPath);
 }
 
-function captureReview(rootPath) {
+function captureStdout(callback) {
   const originalWrite = process.stdout.write;
   let output = "";
 
@@ -205,12 +206,27 @@ function captureReview(rootPath) {
   };
 
   try {
-    runReview(rootPath);
+    callback();
   } finally {
     process.stdout.write = originalWrite;
   }
 
   return output;
+}
+
+function captureReview(rootPath) {
+  return captureStdout(() => runReview(rootPath));
+}
+
+function captureCli(rootPath, argv) {
+  const originalCwd = process.cwd();
+
+  try {
+    process.chdir(rootPath);
+    return captureStdout(() => runCli(argv));
+  } finally {
+    process.chdir(originalCwd);
+  }
 }
 
 function expectedReadyReviewOutput() {
@@ -288,6 +304,29 @@ test("review reports Incomplete when current development state is missing", () =
 
   assert.match(output, /Status: Incomplete — agent will frequently ask basic questions/);
   assert.match(output, /Current Development State is empty/);
+});
+
+test("review --json emits machine-readable readiness output", () => {
+  const rootPath = makeTempProject();
+  writeReviewFixture(rootPath, {
+    manualNotes: ""
+  });
+
+  const output = captureCli(rootPath, ["review", "--json"]);
+  const review = JSON.parse(output);
+
+  assert.equal(review.overallStatus, "Usable — agent can work, but has clear blind spots");
+  assert.deepEqual(review.suggestedNextSteps, ['Run: npx mem-extract note "Add a hidden project constraint or important context"']);
+  assert.equal(review.categories[0].title, "Structure");
+  assert.equal(review.categories[0].checks[0].label, "PROJECT_MEMORY.md exists");
+  assert.equal(review.categories[0].checks[0].severity, "pass");
+  assert.equal(review.categories[0].checks[0].impact, null);
+
+  const contextRichness = review.categories.find((category) => category.title === "Context Richness");
+  const manualNotes = contextRichness.checks.find((check) => check.label === "Manual Notes is empty");
+  assert.equal(manualNotes.severity, "warning");
+  assert.equal(manualNotes.impact, "Agent won't know hidden constraints");
+  assert.equal(manualNotes.nextStepKey, "manual-notes");
 });
 
 test("sync preserves manual notes and architecture decisions outside generated markers", () => {
