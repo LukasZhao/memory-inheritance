@@ -1,0 +1,34 @@
+# RuFlo V3 Runtime Configuration
+# Minimal safe MCP-only config for Codex-assisted review/planning.
+
+version: "3.0.0"
+
+swarm:
+  topology: hierarchical-mesh
+  maxAgents: 3
+  autoScale: false
+  coordinationStrategy: consensus
+
+memory:
+  backend: hybrid
+  enableHNSW: false
+  persistPath: .claude-flow/data
+  cacheSize: 25
+  learningBridge:
+    enabled: false
+  memoryGraph:
+    enabled: false
+  agentScopes:
+    enabled: false
+
+neural:
+  enabled: false
+  modelPath: .claude-flow/neural
+
+hooks:
+  enabled: false
+  autoExecute: false
+
+mcp:
+  autoStart: false
+  port: 3000

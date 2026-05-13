@@ -142,3 +142,17 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Ruflo runtime artifacts
+.swarm/
+ruvector.db
+.claude-flow/metrics/
+.claude-flow/logs/
+.claude-flow/sessions/
+.claude-flow/data/
+.claude-flow/neural/
+
+# Ruflo generated Claude Code integration
+.claude/
+.claude-flow/security/
+.claude-flow/CAPABILITIES.md
