@@ -1,599 +1,265 @@
-# Memory Inheritance
+Memory Inheritance — README v0.5 Update Draft
 
-> Git remembers code history.  
-> Memory Inheritance remembers project context.
+What is Memory Inheritance?
 
-**Memory Inheritance** is a token-aware project memory CLI for AI coding agents.
+Memory Inheritance is a lightweight local-first context management system for AI coding agents.
 
-It turns your repository structure and recent development context into persistent, AI-readable memory files, so tools like **Codex, Claude Code, Cursor, Gemini, and ChatGPT** can understand your project before making changes.
+It helps AI tools like Codex, Claude, Cursor, Gemini, and ChatGPT inherit project context across sessions instead of repeatedly re-learning the repository from scratch.
 
-```bash
-npx mem-extract init
-```
+The project focuses on:
 
----
+* Persistent project memory
+* AI handoff readiness
+* Token-aware context routing
+* Marker-safe synchronization
+* Machine-readable review diagnostics
+* Local-first workflows
 
-## Why Memory Inheritance?
+It intentionally does NOT try to become:
 
-AI coding agents are powerful, but they often lose context.
+* an autonomous agent runtime
+* an AI operating system
+* a background daemon platform
+* an auto-commit / auto-push workflow
+* a swarm orchestration framework
 
-They may forget:
+⸻
 
-- what the project is trying to achieve
-- why the architecture is designed this way
-- which files are important
-- what commands should be used
-- what decisions must be preserved
-- what changed recently
-- which parts of the project are risky to modify
+Core Concepts
 
-Memory Inheritance creates a structured memory layer inside your repository so AI agents can recover project context quickly and consistently.
+Canonical Project Memory
 
-```text
-Git                 = code history
-Memory Inheritance  = project memory
-```
+PROJECT_MEMORY.md is the canonical long-term project memory.
 
-It does not replace Git.  
-It adds a semantic memory layer for AI-assisted development.
+It stores:
 
----
+* current development state
+* architecture decisions
+* manual notes
+* AI collaboration rules
+* generated project scan data
+* generated Git development memory
 
-## What it generates
+⸻
 
-Running:
+Marker-Safe Sync
 
-```bash
-npx mem-extract init
-```
+Generated sections are fenced using markers:
 
-generates:
-
-```text
-PROJECT_MEMORY.md
-AGENTS.md
-CLAUDE.md
-.memory/
-  index.json
-  modules/
-    cli.md
-    context-capture.md
-    git-memory.md
-    markdown-sync.md
-    review.md
-    templates.md
-    testing.md
-```
-
-### File roles
-
-| File | Purpose |
-|---|---|
-| `PROJECT_MEMORY.md` | Compact canonical project memory |
-| `AGENTS.md` | Adapter for Codex / generic AI coding agents |
-| `CLAUDE.md` | Adapter for Claude Code |
-| `.memory/index.json` | Metadata reference index for token-aware memory routing |
-| `.memory/modules/*.md` | Detailed memory files loaded only when relevant |
-
----
-
-## Core concept
-
-Memory Inheritance is not just a Markdown generator.
-
-It is a **token-aware, reference-based memory system** for AI coding workflows.
-
-The agent reading flow is:
-
-```text
-1. Agent reads AGENTS.md or CLAUDE.md
-2. Adapter tells the agent to read PROJECT_MEMORY.md
-3. PROJECT_MEMORY.md gives compact project context
-4. If more detail is needed, agent checks .memory/index.json
-5. Agent reads only the relevant referenced memory files
-```
-
-This avoids forcing AI agents to load the entire project memory on every task.
-
----
-
-## Quick start
-
-### 1. Initialize memory
-
-Inside your project:
-
-```bash
-npx mem-extract init
-```
-
-### 2. Check status
-
-```bash
-npx mem-extract status
-```
-
-### 3. Inspect project memory
-
-```bash
-npx mem-extract inspect "Detected Tech Stack"
-```
-
-### 4. Inspect a referenced memory module
-
-```bash
-npx mem-extract inspect ref:cli
-```
-
-### 5. Capture human context
-
-```bash
-npx mem-extract note "customer requires all processing to stay local"
-npx mem-extract decide "Use Markdown as source of truth instead of a database"
-```
-
-### 6. Sync memory after meaningful changes
-
-```bash
-npx mem-extract sync
-```
-
----
-
-## Main features
-
-### Project memory extraction
-
-Memory Inheritance scans the current project directory and detects:
-
-- project name
-- tech stack
-- important files and folders
-- common commands
-- package manager
-- memory file status
-
-It writes this into `PROJECT_MEMORY.md` as compact AI-readable context.
-
----
-
-### Agent adapter files
-
-Memory Inheritance generates short adapter files for AI coding agents.
-
-#### `AGENTS.md`
-
-Used by Codex and other agents that support agent instruction files.
-
-It tells the agent to:
-
-- read `PROJECT_MEMORY.md` first
-- keep changes focused
-- preserve manual memory notes
-- avoid loading all `.memory/` files by default
-- use `.memory/index.json` when detailed context is needed
-
-#### `CLAUDE.md`
-
-Used by Claude Code.
-
-It tells Claude Code to:
-
-- read `PROJECT_MEMORY.md` first
-- preserve project intent
-- avoid broad rewrites
-- use detailed memory only when relevant
-
----
-
-### Safe sync
-
-Memory files are not disposable generated artifacts.
-
-Developers should be able to edit them manually.
-
-`sync` updates only auto-generated sections and preserves manual notes.
-
-Safe sync uses markers:
-
-```md
-<!-- AUTO-START:PROJECT-SCAN -->
+<!-- AUTO-START:SECTION -->
 ...
-<!-- AUTO-END:PROJECT-SCAN -->
-```
+<!-- AUTO-END:SECTION -->
 
-Only content inside the markers is updated.
+This allows:
 
-Everything outside the markers is preserved.
+* automatic regeneration
+* preservation of manual notes
+* safe incremental syncs
+* deterministic updates
 
-```bash
-npx mem-extract sync
-```
+Human-written knowledge outside markers is preserved.
 
----
+⸻
 
-### Token-aware metadata references
+AI Agent Adapters
 
-`.memory/index.json` acts as a lightweight routing layer.
+Memory Inheritance provides lightweight adapter files:
+
+* AGENTS.md
+* CLAUDE.md
+
+These files instruct AI agents to:
+
+* read PROJECT_MEMORY.md
+* use .memory/index.json
+* follow project collaboration rules
+
+⸻
+
+Token-Aware Context Routing
+
+.memory/index.json acts as a structured reference index.
+
+Instead of loading every document every session, agents can selectively load:
+
+* relevant memory modules
+* architectural context
+* workflow guidance
+* testing notes
+* Git memory
+
+This reduces token waste and lowers AI context drift.
+
+⸻
+
+Review System
+
+Memory Inheritance includes a local review system for evaluating AI handoff readiness.
+
+Human Review Output
+
+mem-extract review
 
 Example:
 
-```json
+Memory Readiness Review
+────────────────────────────────────────
+Status: Ready — agent can take over immediately
+
+The review checks:
+
+* project structure
+* adapter readiness
+* context richness
+* token-aware organization
+* freshness
+
+⸻
+
+Machine-Readable Review
+
+mem-extract review --json
+
+Outputs structured diagnostics:
+
 {
-  "id": "markdown-sync",
-  "title": "Markdown Safe Sync",
-  "path": ".memory/modules/markdown-sync.md",
-  "category": "module",
-  "summary": "Marker-based replacement and manual note preservation.",
-  "readWhen": [
-    "editing sync behavior",
-    "preserving manual notes"
-  ],
-  "sourceFiles": [
-    "src/markdown.ts",
-    "src/commands/sync.ts"
-  ],
-  "risk": "high",
-  "stability": "active",
-  "estimatedTokens": 800,
-  "criticality": 10,
-  "priority": 100
+  "overallStatus": "Ready — agent can take over immediately",
+  "categories": [...],
+  "suggestedNextSteps": [...]
 }
-```
 
-This allows agents to read only the memory that matches the current task.
+This enables:
 
----
+* IDE integrations
+* MCP tooling
+* CI validation
+* automated diagnostics
+* external AI tooling
 
-### Criticality score
+⸻
 
-Not all memory is equally important.
+Current Architecture
 
-Developers can manually score how important a memory reference is:
+src/
+  commands/
+    review.ts
+  review/
+    checks.ts
+    format.ts
+    types.ts
 
-```bash
-npx mem-extract score markdown-sync 10
-npx mem-extract score cli 8
-```
+Review logic is split into:
 
-List scores:
+* check generation
+* formatting
+* shared typed structures
 
-```bash
-npx mem-extract score list
-```
+This separation keeps review behavior stable while allowing future expansion.
 
-Explain scoring:
+⸻
 
-```bash
-npx mem-extract score explain
-```
+Testing
 
-Score guide:
+The project now includes deterministic fixture-based tests.
 
-```text
-1-3   low: optional context
-4-6   medium: read when relevant
-7-8   high: strongly recommended when relevant
-9-10  critical: must read when relevant
-```
+Current coverage includes:
 
-This lets project owners tell AI agents:
-
-> This memory matters. Do not forget it.
-
----
-
-### Memory readiness review
-
-Before handing a project to a new AI agent, run:
-
-```bash
-npx mem-extract review
-```
-
-The review is local-only and does not call any external AI API.
-
-It checks:
-
-- whether the memory file structure exists
-- whether `AGENTS.md` and `CLAUDE.md` point agents to `PROJECT_MEMORY.md`
-- whether canonical context sections have useful content
-- whether `.memory/index.json` is usable for token-aware routing
-- whether Git memory is present and fresh
-
-Readiness is reported as:
-
-- `Ready`: agent can take over immediately
-- `Usable`: agent can work, but has clear blind spots
-- `Incomplete`: agent will frequently ask basic questions
-
----
-
-### Human context capture
-
-Use `note` and `decide` to capture important project context without opening an editor.
-
-```bash
-npx mem-extract note "customer requires all processing to stay local"
-npx mem-extract decide "Use Markdown as source of truth instead of a database"
-```
-
-- `note` appends a dated bullet under `## Manual Notes`
-- `decide` appends a dated bullet under `## Architecture Decisions`
-- existing content is preserved
-- generated marker sections are not modified
-
----
-
-## Commands
-
-| Command | Description |
-|---|---|
-| `npx mem-extract init` | Generate memory files |
-| `npx mem-extract init --force` | Regenerate memory files |
-| `npx mem-extract sync` | Update generated memory while preserving manual notes |
-| `npx mem-extract status` | Show project and memory status |
-| `npx mem-extract inspect <section>` | Inspect a section from `PROJECT_MEMORY.md` |
-| `npx mem-extract inspect ref:<id>` | Inspect a referenced memory module |
-| `npx mem-extract note "..."` | Append a dated note to `Manual Notes` |
-| `npx mem-extract decide "..."` | Append a dated decision to `Architecture Decisions` |
-| `npx mem-extract review` | Check whether memory is ready for AI agents |
-| `npx mem-extract score <id> <score>` | Set criticality score for a memory reference |
-| `npx mem-extract score list` | List memory criticality scores |
-| `npx mem-extract score explain` | Explain the scoring system |
-
----
-
-## Git semantic memory
-
-Memory Inheritance can also summarize recent Git activity into AI-readable development memory.
-
-Instead of dumping raw commit logs, it groups recent commits into compact categories such as:
-
-- feature work
-- bug fixes
-- documentation
-- tests
-- refactoring
-- maintenance
-- build/package changes
-- CI/CD
-
-Example:
-
-```bash
-npx mem-extract sync --recent 10
-```
-
-This helps agents understand what recently changed and where the project is moving.
-
----
-
-## Commit message recommendation
-
-Memory Inheritance generates better Git semantic memory when commit messages use clear category prefixes.
-
-We strongly recommend using simple conventional prefixes:
-
-```text
-feat: add memory reference index
-fix: preserve manual notes during sync
-docs: update README usage guide
-test: add packaged CLI test
-refactor: split markdown sync logic
-chore: clean npm package artifacts
-build: update package configuration
-ci: update release workflow
-```
-
-Recommended prefixes:
-
-| Prefix | Meaning |
-|---|---|
-| `feat:` | New feature |
-| `fix:` | Bug fix |
-| `docs:` | Documentation change |
-| `test:` | Test-related change |
-| `refactor:` | Code restructuring without behavior change |
-| `chore:` | Maintenance task |
-| `build:` | Build or package change |
-| `ci:` | CI/CD change |
-
-You can define your own categories, but consistent prefixes make it easier for Memory Inheritance to classify recent Git activity into compact AI-readable development memory.
-
-Better commit messages create better agent context.
-
----
-
-## Example workflow
-
-```bash
-npx mem-extract init
-npx mem-extract status
-npx mem-extract score markdown-sync 10
-npx mem-extract inspect ref:markdown-sync
-```
-
-After meaningful project changes:
-
-```bash
-npx mem-extract sync
-```
-
-After recent Git commits:
-
-```bash
-npx mem-extract sync --recent 10
-```
-
----
-
-## Philosophy
-
-Memory Inheritance is not a database-first system.
-
-Markdown remains the human-readable interface.
-
-JSON metadata is only a lightweight routing layer.
-
-```text
-NPM automates memory extraction.
-Markdown stores memory transparently.
-Metadata references route AI to relevant details.
-AI agents load memory on demand.
-```
-
-Memory should be reviewed like code.
-
-```text
-Memory is code. Review it before committing.
-```
-
----
-
-## Roadmap
-
-### v0.1 — Basic memory generator
-
-- scan project
-- detect tech stack
-- detect commands
-- generate `PROJECT_MEMORY.md`
-- generate `AGENTS.md`
-- generate `CLAUDE.md`
-- support `init`, `sync`, `status`, `inspect`
-
-### v0.2 — Safe sync + agent adapters
-
-- marker-based safe sync
-- manual note preservation
-- compact `PROJECT_MEMORY.md`
-- short `AGENTS.md` and `CLAUDE.md` adapter files
-- improved status output
-
-### v0.3 — Token-aware metadata references
-
-- `.memory/index.json`
-- `.memory/modules/*.md`
-- inspect by reference id
-- metadata-based memory routing
-- developer-controlled criticality scores
-
-### v0.4 — Git semantic memory
-
-- read recent Git commits
-- summarize recent development activity
-- `sync --recent 10`
-- compressed development memory
-- no full history dumps by default
-
-### v0.5 — Memory readiness review
-
-- `review` command
-- readiness status without numeric scoring
-- structure, adapter, context, token routing, and freshness checks
-- suggested next steps for better agent handoff
-
-### v0.6 — Semantic conflict detection
-
-- forbidden pattern checks
-- architecture rule warnings
-- product direction warnings
-- possible CI integration
-
-### v0.7 — Ecosystem adapters
-
-- Cursor adapter
-- Gemini adapter
-- more agent-specific entry files
-- possible IDE integration
-
----
-
-## Future ideas
-
-### Semantic conflict detection
-
-Future versions may detect when new code conflicts with recorded project memory.
-
-Example:
-
-```md
-## Forbidden Tech/Patterns
-
-- Do not use Redux.
-- Do not remove generated memory markers.
-- Do not overwrite manual memory notes during sync.
-```
-
-If code introduces a forbidden pattern, the CLI could warn the developer.
-
----
-
-### Memory versioning
-
-Because memory files live inside the repository, they can be reviewed and versioned with Git.
-
-This makes project memory auditable.
-
----
-
-### Agent ecosystem adapters
-
-Future versions may support additional agent entry files, such as:
-
-```text
-.cursor/rules/memory-inheritance.mdc
-GEMINI.md
-```
-
-The goal is to make one project memory system work across multiple AI coding tools.
-
----
-
-## Development
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Run in development mode:
-
-```bash
-npm run dev -- status
-```
-
-Build:
-
-```bash
-npm run build
-```
+* Ready review status
+* Usable review status
+* Incomplete review status
+* marker-safe sync preservation
+* exact CLI output stability
+* JSON review output
 
 Run tests:
 
-```bash
 npm test
-```
 
-Pack locally:
+Build:
 
-```bash
-npm pack
-```
+npm run build
 
-Test in another local project:
+⸻
 
-```bash
-cd /path/to/your/project
-npm install /path/to/memory-inheritance/mem-extract-1.0.0.tgz
-npx mem-extract init
-npx mem-extract status
-```
+Local-First Philosophy
 
----
+Memory Inheritance is intentionally local-first.
 
-## License
+The system avoids:
 
-MIT
+* external AI APIs
+* background daemons
+* auto-sync services
+* hidden network behavior
+* autonomous commit pipelines
+
+Project memory should remain transparent, inspectable, and developer-controlled.
+
+⸻
+
+Ruflo Integration
+
+Ruflo is supported as a development-time advisory layer.
+
+Recommended usage:
+
+* architecture review
+* diff risk analysis
+* planning assistance
+* testing strategy review
+
+Not recommended:
+
+* autonomous swarms
+* persistent agents
+* auto-commit hooks
+* daemonized workflows
+
+Recommended workflow:
+
+Codex → implement
+Ruflo → analyze_diff
+Human → final decision
+
+⸻
+
+Current v0.5 Status
+
+Completed
+
+* marker-safe sync
+* canonical project memory
+* structured memory routing
+* deterministic review system
+* machine-readable review output
+* fixture-based tests
+* safe AI-assisted workflow
+
+In Progress
+
+* memory freshness semantics
+* reference validation
+* token-aware memory scoring
+* stale context detection
+* memory optimization heuristics
+
+Explicit Non-Goals
+
+* autonomous AI organizations
+* swarm runtimes
+* memory graphs
+* hidden automation
+* AI operating systems
+
+⸻
+
+Vision
+
+Memory Inheritance aims to make project memory reliable enough for AI handoff.
+
+The long-term goal is not autonomous coding.
+
+The goal is stable context inheritance:
+
+A new AI session should feel like a developer continuing work,
+not a new developer joining the project from zero.
